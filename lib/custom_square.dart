@@ -14,24 +14,25 @@ class CustomSquare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AnimatedContainer(
-            width: width,
-            height: height,
-            duration: Duration(seconds: 3),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: color,
-                width: 5,
+    return GestureDetector(
+      child: Container(
+        height: 100,
+        width: 100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: color,
+                  width: 5,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

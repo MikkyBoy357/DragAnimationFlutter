@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'custom_square.dart';
+import 'custom_animated_positioned.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,6 +46,44 @@ class _MyHomePageState extends State<MyHomePage> {
     return mike == 0 ? null : _currentDragOffset;
   }
 
+  double dvdWidth = 100;
+  double dvdHeight = 100;
+
+  update() {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    if (_currentDragOffset.dx + dvdWidth >= screenWidth) {
+      print("OUT OF BOUNDS: RIGHT");
+      _currentDragOffset += Offset(-30, 0);
+    } else if (_currentDragOffset.dx <= 0) {
+      print("OUT OF BOUNDS: LEFT");
+      _currentDragOffset += Offset(30, 0);
+    }
+
+    if (_currentDragOffset.dy + dvdHeight >= screenHeight) {
+      print("OUT OF BOUNDS: BOTTOM");
+      _currentDragOffset += Offset(0, -30);
+    } else if (_currentDragOffset.dy <= 0) {
+      print("OUT OF BOUNDS: TOP");
+      _currentDragOffset += Offset(0, 30);
+    }
+
+    setState(() {});
+  }
+
+  List<Color> colors = [
+    Colors.grey,
+    Colors.green,
+    Colors.blue,
+    Colors.purple,
+    Colors.yellow,
+    Colors.orange,
+    Colors.red,
+    Colors.red,
+    Colors.white
+  ];
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -63,131 +101,37 @@ class _MyHomePageState extends State<MyHomePage> {
           width: size.width,
           child: Stack(
             alignment: Alignment.center,
-            children: <Widget>[
-              /// =============>
-              GestureDetector(
-                onPanStart: (details) {
-                  print("onPanStart");
-                  print(details);
-                  mike++;
-                },
-                onPanUpdate: (details) {
-                  print("onPanUpdate");
-                  print(details);
-                  var previousOffset = _currentDragOffset;
-                  _currentDragOffset += details.delta;
-                  mike++;
-                  setState(() {});
-                },
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    AnimatedPositioned(
-                      // curve: Interval(0.06, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 1400),
-                      child: CustomSquare(
-                        width: 100,
-                        height: 100,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.0325, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 1200),
-                      child: CustomSquare(
-                        width: 90,
-                        height: 90,
-                        color: Colors.green,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.031, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 1100),
-                      child: CustomSquare(
-                        width: 80,
-                        height: 80,
-                        color: Colors.blue,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.028, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 1000),
-                      child: CustomSquare(
-                        width: 70,
-                        height: 70,
-                        color: Colors.purple,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.0245, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 900),
-                      child: CustomSquare(
-                        width: 60,
-                        height: 60,
-                        color: Colors.yellow,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.02, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 800),
-                      child: CustomSquare(
-                        width: 50,
-                        height: 50,
-                        color: Colors.orange,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.01, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 700),
-                      child: CustomSquare(
-                        width: 40,
-                        height: 40,
-                        color: Colors.red,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      // curve: Interval(0.01, 1.0),
-                      left: _getCurrentDragOffset()?.dx,
-                      top: _getCurrentDragOffset()?.dy,
-                      duration: Duration(milliseconds: 600),
-                      child: CustomSquare(
-                        width: 30,
-                        height: 30,
-                        color: Colors.red,
-                      ),
-                    ),
-                    AnimatedPositioned(
-                      left: _getCurrentDragOffset()?.dx,
-                      // right: posRight,
-                      top: _getCurrentDragOffset()?.dy,
-                      // bottom: posBottom,
-                      duration: Duration(milliseconds: 500),
-                      child: CustomSquare(
-                        width: 20,
-                        height: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            children: List.generate(
+              9,
+              (index) {
+                // print("$index => ${(1400 - (index * 100))}");
+                return CustomAnimatedPositioned(
+                  onPanStart: (details) {
+                    print("onPanStart");
+                    print(details);
+                    mike++;
+                  },
+                  onPanUpdate: (details) {
+                    print("onPanUpdate");
+                    print(details);
+                    // var previousOffset = _currentDragOffset;
+                    _currentDragOffset += details.delta;
+                    mike++;
 
-              /// =============>
-            ],
+                    update();
+                    setState(() {});
+                  },
+                  onPanEnd: (details) {
+                    print("onPanEnd");
+                    update();
+                  },
+                  currentDragOffset: _getCurrentDragOffset(),
+                  duration: Duration(milliseconds: (1400 - (index * 100))),
+                  size: (100 - (index * 10)).toDouble(),
+                  color: colors[index],
+                );
+              },
+            ),
           ),
         ),
       ),
